@@ -3,7 +3,6 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,12 +16,12 @@ model User {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
   email          String?   @unique
-  emaiVerified   DateTime?
+  emailVerified  DateTime?
   image          String?
   hashedPassword String?
-  createAt       DateTime  @default(now())
+  createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  favoriteIds    String[]  @db.ObjectId
+  favoriteIds    String[] // Removed @db.ObjectId for compatibility.
 
   accounts     Account[]
   listings     Listing[]
@@ -62,7 +61,7 @@ model Listing {
   userId        String   @db.ObjectId
   price         Int
 
-  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   reservations Reservation[]
 }
 

@@ -6,7 +6,7 @@ import ClientOnly from "./components/ClientOnly";
 import RegisterModal from "./components/modals/RegisterModal";
 import TosterProvider from "./providers/ToasterProvider";
 import LoginModal from "./components/modals/LoginModal";
-import getCurrentuser from "./actions/getCurrentUser";
+import getCurrentUser from "./actions/getCurrentUser";
 
 
 
@@ -25,7 +25,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
 
-  const currentUser = await getCurrentuser();
+  const currentUser = await getCurrentUser();
 
   return (
     <html lang="en">
