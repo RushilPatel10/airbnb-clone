@@ -1,29 +1,32 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { AuthOptions } from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import prisma from "@/app/libs/prismadb";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from 'bcrypt';
-import NextAuth from "next-auth";
-
 
 export const authOptions: AuthOptions = {
     adapter: PrismaAdapter(prisma),
     providers: [
-        GithubProvider({
-            clientId: process.env.GITHUB_ID as string,
-            clientSecret: process.env.GITHUB_SECRET as string,
-        }),
         GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID as string,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            authorization: {
+                params: {
+                    prompt: "select_account"
+                }
+            }
+        }),
+        GithubProvider({
+            clientId: process.env.GITHUB_ID!,
+            clientSecret: process.env.GITHUB_SECRET!,
         }),
         CredentialsProvider({
             name: 'credentials',
             credentials: {
-                email: { label: "Email", type: "text" },
-                password: { label: "Password", type: "password" }
+                email: { label: 'email', type: 'text' },
+                password: { label: 'password', type: 'password' }
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
@@ -58,9 +61,28 @@ export const authOptions: AuthOptions = {
     },
     debug: process.env.NODE_ENV === 'development',
     session: {
-        strategy: 'jwt',
+        strategy: "jwt",
     },
     secret: process.env.NEXTAUTH_SECRET,
+    callbacks: {
+        async jwt({ token, user, account }) {
+            if (account && user) {
+                return {
+                    ...token,
+                    accessToken: account.access_token,
+                    refreshToken: account.refresh_token,
+                }
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            session.user.accessToken = token.accessToken;
+            session.user.refreshToken = token.refreshToken;
+            session.user.username = token.username;
+            
+            return session;
+        }
+    }
 };
 
 export default NextAuth(authOptions);

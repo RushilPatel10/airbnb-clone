@@ -31,7 +31,7 @@ export default async function getCurrentUser() {
             updatedAt: currentUser.updatedAt?.toISOString() , // Safeguard
             emailVerified: currentUser.emailVerified?.toISOString() || null, // Safeguard
         };
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error in getCurrentUser:", error);
         return null;
     }

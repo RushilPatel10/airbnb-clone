@@ -1,23 +1,24 @@
 'use client'
 
 import axios from "axios";
-import { AiFillGithub } from "react-icons/ai";
-import { FcGoogle } from "react-icons/fc";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
+import useLoginModal from "@/app/hooks/useLoginModal";
 import Modal from "./Modal";
 import Heading from "../Heading";
 import Input from "../inputs/Input";
 import { toast } from "react-hot-toast";
 import Button from "../Button";
 import { signIn } from "next-auth/react";
-
+import { AiFillGithub } from "react-icons/ai";
+import { FcGoogle } from "react-icons/fc";
 
 const RegisterModal = () => {
-
     const registerModal = useRegisterModal();
+    const loginModal = useLoginModal();
     const [isLoading, setIsLoading] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -33,19 +34,70 @@ const RegisterModal = () => {
     });
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
-        setIsLoading(true)
+        setIsLoading(true);
 
         axios.post('/api/register', data)
             .then(() => {
+                toast.success('Success!');
                 registerModal.onClose();
+                loginModal.onOpen();
             })
             .catch((error) => {
-                toast.error('somthing went wrong')
+                toast.error('Something went wrong');
             })
             .finally(() => {
                 setIsLoading(false);
-            })
+            });
     }
+
+    const handleGoogleSignIn = async () => {
+        try {
+            setIsLoading(true);
+            const result = await signIn('google', {
+                callbackUrl: '/',
+            });
+            
+            if (result?.error) {
+                toast.error('Failed to sign in with Google');
+                console.error('Sign in error:', result.error);
+            } else if (result?.ok) {
+                toast.success('Logged in successfully!');
+                registerModal.onClose();
+            }
+        } catch (error) {
+            console.error('Google Sign-in Error:', error);
+            toast.error('Something went wrong with Google sign in');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleGithubSignIn = async () => {
+        try {
+            setIsLoading(true);
+            const result = await signIn('github', {
+                callbackUrl: '/',
+            });
+            
+            if (result?.error) {
+                toast.error('Failed to sign in with GitHub');
+                console.error('Sign in error:', result.error);
+            } else if (result?.ok) {
+                toast.success('Logged in successfully!');
+                registerModal.onClose();
+            }
+        } catch (error) {
+            console.error('GitHub Sign-in Error:', error);
+            toast.error('Something went wrong with GitHub sign in');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const onToggle = () => {
+        registerModal.onClose();
+        loginModal.onOpen();
+    };
 
     const bodyContent = (
         <div className="flex flex-col gap-4">
@@ -88,26 +140,28 @@ const RegisterModal = () => {
                 outline
                 label="Continue with Google"
                 icon={FcGoogle}
-                onClick={() => { }}
+                onClick={handleGoogleSignIn}
+                disabled={isLoading}
             />
             <Button
                 outline
                 label="Continue with GitHub"
                 icon={AiFillGithub}
-                onClick={() => signIn('github')}
+                onClick={handleGithubSignIn}
+                disabled={isLoading}
             />
             <div className="text-neutral-500 text-center mt-4 font-light">
-                <div className="justify-center flex flex-fow items-center gap-2">
+                <div className="justify-center flex flex-row items-center gap-2">
                     <div>
                         Already have an account?
                     </div>
                     <div
-                        onClick={registerModal.onClose}
+                        onClick={onToggle}
                         className="
-                        text-neutral-800
-                        cursor-pointer
-                        hover:underline
-                    ">
+                            text-neutral-800
+                            cursor-pointer
+                            hover:underline
+                        ">
                         Log in
                     </div>
                 </div>
@@ -126,7 +180,7 @@ const RegisterModal = () => {
             body={bodyContent}
             footer={footerContent}
         />
-    )
+    );
 }
 
 export default RegisterModal;

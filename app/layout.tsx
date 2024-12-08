@@ -7,8 +7,10 @@ import RegisterModal from "./components/modals/RegisterModal";
 import TosterProvider from "./providers/ToasterProvider";
 import LoginModal from "./components/modals/LoginModal";
 import getCurrentUser from "./actions/getCurrentUser";
+import { getSession } from 'next-auth/react';
+import RentModal from "@/app/components/modals/RentModal";
 
-
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: "Airbnb",
@@ -26,6 +28,10 @@ export default async function RootLayout({
 }) {
 
   const currentUser = await getCurrentUser();
+  const session = await getSession();
+  
+  console.log('Current Session:', session); // Debug log
+  console.log('Current User:', currentUser); // Debug log
 
   return (
     <html lang="en">
@@ -34,10 +40,13 @@ export default async function RootLayout({
           <TosterProvider />
           <LoginModal />
           <RegisterModal />
+          <RentModal />
           <Navbar currentUser={currentUser} />
         </ClientOnly>
 
-        {children}
+        <div className="pb-20 pt-28">
+          {children}
+        </div>
       </body>
     </html>
   );
