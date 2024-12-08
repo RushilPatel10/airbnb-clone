@@ -36,7 +36,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
     }
 
     rentModal.onOpen();
-  }, [currentUser, loginModal, rentModal]);
+  }, [loginModal, rentModal, currentUser]);
 
   return ( 
     <div className="relative">
@@ -58,7 +58,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
         >
           Airbnb your home
         </div>
-        <div 
+        <div
           onClick={toggleOpen}
           className="
             p-4

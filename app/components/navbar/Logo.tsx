@@ -9,15 +9,15 @@ const Logo = () => {
   return (
     <Image
       onClick={() => router.push('/')}
-      alt="Logo"
-      className="hidden md:block cursor-pointer"
+      className="hidden md:block cursor-pointer" 
+      src="/images/logo.png"
       height="100"
       width="100"
-      src="/images/logo.png"
-      priority
-      style={{
+      alt="Logo"
+      style={{ 
+        maxHeight: '50px', 
         width: 'auto',
-        height: 'auto'
+        objectFit: 'contain'
       }}
     />
   );

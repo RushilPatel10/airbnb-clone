@@ -3,21 +3,19 @@
 import { useMemo, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import axios from "axios";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 import useRentModal from "@/app/hooks/useRentModal";
-import { categories } from "../navbar/Categories";
-
 import Modal from "./Modal";
 import Heading from "../Heading";
+import { categories } from "../navbar/Categories";
 import CategoryInput from "../inputs/CategoryInput";
 import CountrySelect from "../inputs/CountrySelect";
 import Counter from "../inputs/Counter";
 import ImageUpload from "../inputs/ImageUpload";
 import Input from "../inputs/Input";
-import { toast } from "react-hot-toast";
-import MapWrapper from "../MapWrapper";
 
 enum STEPS {
   CATEGORY = 0,
@@ -25,7 +23,7 @@ enum STEPS {
   INFO = 2,
   IMAGES = 3,
   DESCRIPTION = 4,
-  PRICE = 5
+  PRICE = 5,
 }
 
 const RentModal = () => {
@@ -41,7 +39,7 @@ const RentModal = () => {
     setValue,
     watch,
     formState: { errors },
-    reset
+    reset,
   } = useForm<FieldValues>({
     defaultValues: {
       category: '',
@@ -52,7 +50,7 @@ const RentModal = () => {
       imageSrc: '',
       price: 1,
       title: '',
-      description: ''
+      description: '',
     }
   });
 
@@ -62,6 +60,10 @@ const RentModal = () => {
   const roomCount = watch('roomCount');
   const bathroomCount = watch('bathroomCount');
   const imageSrc = watch('imageSrc');
+
+  const Map = useMemo(() => dynamic(() => import('../Map'), {
+    ssr: false
+  }), [location]);
 
   const setCustomValue = (id: string, value: any) => {
     setValue(id, value, {
@@ -91,7 +93,7 @@ const RentModal = () => {
       toast.success('Listing created!');
       router.refresh();
       reset();
-      setStep(STEPS.CATEGORY)
+      setStep(STEPS.CATEGORY);
       rentModal.onClose();
     })
     .catch(() => {
@@ -160,7 +162,7 @@ const RentModal = () => {
           value={location} 
           onChange={(value) => setCustomValue('location', value)} 
         />
-        <MapWrapper center={location?.latlng} />
+        <Map center={location?.latlng} />
       </div>
     );
   }

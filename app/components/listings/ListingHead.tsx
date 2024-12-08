@@ -11,7 +11,7 @@ interface ListingHeadProps {
   locationValue: string;
   imageSrc: string;
   id: string;
-  currentUser?: SafeUser | null
+  currentUser?: SafeUser | null;
 }
 
 const ListingHead: React.FC<ListingHeadProps> = ({
@@ -24,30 +24,41 @@ const ListingHead: React.FC<ListingHeadProps> = ({
   const { getByValue } = useCountries();
   const location = getByValue(locationValue);
 
+  // Format Cloudinary URL
+  const imageUrl = imageSrc?.startsWith('http') 
+    ? imageSrc 
+    : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${imageSrc}`;
+
+  if (!imageUrl) {
+    return null;
+  }
+
   return ( 
     <>
       <Heading
         title={title}
         subtitle={`${location?.region}, ${location?.label}`}
       />
-      <div 
-        className="
-          w-full
-          h-[60vh]
-          overflow-hidden 
-          rounded-xl
-          relative
-        "
-      >
+      <div className="
+        w-full
+        h-[60vh]
+        overflow-hidden 
+        rounded-xl
+        relative
+      ">
         <Image
-          src={imageSrc}
+          src={imageUrl}
           fill
           className="object-cover w-full"
-          alt="Listing"
-          priority
+          alt={title || "Listing"}
+          priority={true}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        <div className="absolute top-5 right-5">
+        <div className="
+          absolute
+          top-5
+          right-5
+        ">
           <HeartButton 
             listingId={id}
             currentUser={currentUser}

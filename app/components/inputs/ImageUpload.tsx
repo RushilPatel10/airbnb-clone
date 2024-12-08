@@ -9,6 +9,8 @@ declare global {
   var cloudinary: any
 }
 
+const uploadPreset = "watirryz";
+
 interface ImageUploadProps {
   onChange: (value: string) => void;
   value: string;
@@ -25,7 +27,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   return (
     <CldUploadWidget 
       onUpload={handleUpload} 
-      uploadPreset="ml_default"
+      uploadPreset={uploadPreset}
       options={{
         maxFiles: 1
       }}
@@ -57,17 +59,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             <div className="font-semibold text-lg">
               Click to upload
             </div>
-            {value && value.length > 0 && (
+            {value && (
               <div className="
-                absolute 
-                inset-0 
-                w-full 
-                h-full
-              ">
+              absolute inset-0 w-full h-full">
                 <Image
                   fill 
                   style={{ objectFit: 'cover' }} 
-                  src={value}
+                  src={value} 
                   alt="House" 
                 />
               </div>

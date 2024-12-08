@@ -11,27 +11,50 @@ interface IParams {
 }
 
 export default async function ListingPage({ params }: { params: IParams }) {
-  const listingId = params.listingId;
-  
-  const listing = await getListingById({ listingId });
-  const reservations = await getReservations({ listingId });
-  const currentUser = await getCurrentUser();
+  try {
+    const listingId = params?.listingId;
+    
+    if (!listingId) {
+      return (
+        <ClientOnly>
+          <EmptyState 
+            title="Missing listing ID"
+            subtitle="Please try another listing"
+          />
+        </ClientOnly>
+      );
+    }
 
-  if (!listing) {
+    const listing = await getListingById(listingId);
+    const reservations = await getReservations({ listingId });
+    const currentUser = await getCurrentUser();
+
+    if (!listing) {
+      return (
+        <ClientOnly>
+          <EmptyState />
+        </ClientOnly>
+      );
+    }
+
     return (
       <ClientOnly>
-        <EmptyState />
+        <ListingClient
+          listing={listing}
+          reservations={reservations}
+          currentUser={currentUser}
+        />
+      </ClientOnly>
+    );
+  } catch (error) {
+    console.error('Error in ListingPage:', error);
+    return (
+      <ClientOnly>
+        <EmptyState 
+          title="Something went wrong"
+          subtitle="Please try again later"
+        />
       </ClientOnly>
     );
   }
-
-  return (
-    <ClientOnly>
-      <ListingClient
-        listing={listing}
-        reservations={reservations}
-        currentUser={currentUser}
-      />
-    </ClientOnly>
-  );
 } 

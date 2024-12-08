@@ -69,19 +69,39 @@ const ListingCard: React.FC<ListingCardProps> = ({
     return `${format(start, 'PP')} - ${format(end, 'PP')}`;
   }, [reservation]);
 
+  const imageUrl = useMemo(() => {
+    if (!data.imageSrc) {
+      return 'https://via.placeholder.com/500x500?text=No+Image';
+    }
+    
+    if (data.imageSrc.startsWith('http')) {
+      return data.imageSrc;
+    }
+    
+    return `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${data.imageSrc}`;
+  }, [data.imageSrc]);
+
   return (
     <div 
       onClick={() => router.push(`/listings/${data.id}`)} 
-      className="col-span-1 cursor-pointer group"
+      className="
+        col-span-1 
+        cursor-pointer 
+        group
+        bg-white
+        rounded-xl
+        border-[1px]
+        border-neutral-200
+        overflow-hidden
+      "
     >
-      <div className="flex flex-col gap-2 w-full">
+      <div className="flex flex-col w-full gap-2">
         <div 
           className="
             aspect-square 
             w-full 
             relative 
-            overflow-hidden 
-            rounded-xl
+            overflow-hidden
           "
         >
           <Image
@@ -92,10 +112,11 @@ const ListingCard: React.FC<ListingCardProps> = ({
               w-full 
               group-hover:scale-110 
               transition
+              duration-300
+              ease-in-out
             "
-            src={data.imageSrc || '/images/placeholder.jpg'}
-            alt="Listing"
-            priority
+            src={imageUrl}
+            alt={`${data.title || 'Listing'}`}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           <div className="
@@ -109,28 +130,31 @@ const ListingCard: React.FC<ListingCardProps> = ({
             />
           </div>
         </div>
-        <div className="font-semibold text-lg">
-          {location?.region}, {location?.label}
-        </div>
-        <div className="font-light text-neutral-500">
-          {reservationDate || data.category}
-        </div>
-        <div className="flex flex-row items-center gap-1">
-          <div className="font-semibold">
-            $ {price}
+        <div className="p-4">
+          <div className="font-semibold text-lg">
+            {location?.region}, {location?.label}
           </div>
-          {!reservation && (
-            <div className="font-light">night</div>
+          <div className="font-light text-neutral-500">
+            {reservationDate || data.category}
+          </div>
+          <div className="flex flex-row items-center gap-1 mt-1">
+            <div className="font-semibold">
+              $ {price}
+            </div>
+            {!reservation && (
+              <div className="font-light">/ night</div>
+            )}
+          </div>
+          {onAction && actionLabel && (
+            <Button
+              disabled={disabled}
+              small
+              label={actionLabel} 
+              onClick={handleCancel}
+              className="mt-2"
+            />
           )}
         </div>
-        {onAction && actionLabel && (
-          <Button
-            disabled={disabled}
-            small
-            label={actionLabel} 
-            onClick={handleCancel}
-          />
-        )}
       </div>
     </div>
    );

@@ -9,6 +9,7 @@ import LoginModal from "./components/modals/LoginModal";
 import getCurrentUser from "./actions/getCurrentUser";
 import { getSession } from 'next-auth/react';
 import RentModal from "@/app/components/modals/RentModal";
+import SearchModal from "@/app/components/modals/SearchModal";
 
 export const dynamic = 'force-dynamic'
 
@@ -40,6 +41,7 @@ export default async function RootLayout({
           <TosterProvider />
           <LoginModal />
           <RegisterModal />
+          <SearchModal />
           <RentModal />
           <Navbar currentUser={currentUser} />
         </ClientOnly>

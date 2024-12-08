@@ -12,19 +12,19 @@ export interface IListingsParams {
 }
 
 export default async function getListings(
-  params: IListingsParams
+  params: { [key: string]: string | string[] | undefined }
 ) {
   try {
     const {
       userId,
-      roomCount, 
-      guestCount, 
-      bathroomCount, 
+      roomCount,
+      guestCount,
+      bathroomCount,
       locationValue,
       startDate,
       endDate,
       category,
-    } = params || {};
+    } = params;
 
     let query: any = {};
 
@@ -39,19 +39,19 @@ export default async function getListings(
     if (roomCount) {
       query.roomCount = {
         gte: +roomCount
-      }
+      };
     }
 
     if (guestCount) {
       query.guestCount = {
         gte: +guestCount
-      }
+      };
     }
 
     if (bathroomCount) {
       query.bathroomCount = {
         gte: +bathroomCount
-      }
+      };
     }
 
     if (locationValue) {
@@ -74,7 +74,7 @@ export default async function getListings(
             ]
           }
         }
-      }
+      };
     }
 
     const listings = await prisma.listing.findMany({
@@ -89,8 +89,11 @@ export default async function getListings(
       createdAt: listing.createdAt.toISOString(),
     }));
 
+    console.log('Fetched listings:', safeListings); // Debug log
+
     return safeListings;
   } catch (error: any) {
+    console.error('Error in getListings:', error); // Debug log
     throw new Error(error);
   }
 } 
