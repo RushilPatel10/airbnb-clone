@@ -9,8 +9,6 @@ declare global {
   var cloudinary: any
 }
 
-const uploadPreset = "watirryz";
-
 interface ImageUploadProps {
   onChange: (value: string) => void;
   value: string;
@@ -20,14 +18,16 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onChange,
   value
 }) => {
-  const handleUpload = useCallback((result: any) => {
-    onChange(result.info.secure_url);
+  const handleSuccess = useCallback((result: any) => {
+    if (result?.info?.secure_url) {
+      onChange(result.info.secure_url);
+    }
   }, [onChange]);
 
   return (
     <CldUploadWidget 
-      onUpload={handleUpload} 
-      uploadPreset={uploadPreset}
+      onSuccess={handleSuccess} 
+      uploadPreset="watirryz"
       options={{
         maxFiles: 1
       }}
@@ -61,7 +61,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             </div>
             {value && (
               <div className="
-              absolute inset-0 w-full h-full">
+                absolute inset-0 w-full h-full">
                 <Image
                   fill 
                   style={{ objectFit: 'cover' }} 

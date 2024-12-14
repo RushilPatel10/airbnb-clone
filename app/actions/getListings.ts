@@ -5,15 +5,13 @@ export interface IListingsParams {
   guestCount?: number;
   roomCount?: number;
   bathroomCount?: number;
-  startDate?: string;
-  endDate?: string;
-  locationValue?: string;
-  category?: string;
+  startDate?: string | null;
+  endDate?: string | null;
+  locationValue?: string | null;
+  category?: string | null;
 }
 
-export default async function getListings(
-  params: { [key: string]: string | string[] | undefined }
-) {
+export default async function getListings(params: IListingsParams) {
   try {
     const {
       userId,
@@ -24,7 +22,7 @@ export default async function getListings(
       startDate,
       endDate,
       category,
-    } = params;
+    } = params || {};
 
     let query: any = {};
 
@@ -89,11 +87,9 @@ export default async function getListings(
       createdAt: listing.createdAt.toISOString(),
     }));
 
-    console.log('Fetched listings:', safeListings); // Debug log
-
     return safeListings;
   } catch (error: any) {
-    console.error('Error in getListings:', error); // Debug log
+    console.error('Error in getListings:', error);
     throw new Error(error);
   }
 } 

@@ -1,10 +1,7 @@
 'use client';
 
-import { 
-  DateRange, 
-  Range, 
-  RangeKeyDict
-} from 'react-date-range';
+import { DateRange, Range, RangeKeyDict } from 'react-date-range';
+import { addDays } from 'date-fns';
 
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
@@ -30,6 +27,8 @@ const Calendar: React.FC<CalendarProps> = ({
       showDateDisplay={false}
       minDate={new Date()}
       disabledDates={disabledDates}
+      months={1}
+      fixedHeight
     />
    );
 }

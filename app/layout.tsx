@@ -7,7 +7,6 @@ import RegisterModal from "./components/modals/RegisterModal";
 import TosterProvider from "./providers/ToasterProvider";
 import LoginModal from "./components/modals/LoginModal";
 import getCurrentUser from "./actions/getCurrentUser";
-import { getSession } from 'next-auth/react';
 import RentModal from "@/app/components/modals/RentModal";
 import SearchModal from "@/app/components/modals/SearchModal";
 
@@ -27,12 +26,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   const currentUser = await getCurrentUser();
-  const session = await getSession();
-  
-  console.log('Current Session:', session); // Debug log
-  console.log('Current User:', currentUser); // Debug log
 
   return (
     <html lang="en">

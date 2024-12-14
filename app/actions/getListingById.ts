@@ -4,22 +4,14 @@ interface IParams {
   listingId?: string;
 }
 
-export default async function getListingById(
-  params: IParams
-) {
+export default async function getListingById(listingId: string) {
   try {
-    const { listingId } = params;
-
-    if (!listingId) {
-      return null;
-    }
-
     const listing = await prisma.listing.findUnique({
       where: {
         id: listingId,
       },
       include: {
-        user: true
+        user: true,
       }
     });
 
@@ -39,6 +31,7 @@ export default async function getListingById(
       }
     };
   } catch (error: any) {
+    console.error('Error in getListingById:', error);
     throw new Error(error);
   }
 } 

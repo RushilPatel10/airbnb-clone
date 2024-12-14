@@ -7,24 +7,17 @@ import EmptyState from "@/app/components/EmptyState";
 import ListingClient from "./ListingClient";
 
 interface IParams {
-  listingId?: string;
+  listingId: string;
 }
 
-export default async function ListingPage({ params }: { params: IParams }) {
+export default async function ListingPage({ 
+  params 
+}: { 
+  params: IParams 
+}) {
   try {
-    const listingId = params?.listingId;
+    const { listingId } = params;
     
-    if (!listingId) {
-      return (
-        <ClientOnly>
-          <EmptyState 
-            title="Missing listing ID"
-            subtitle="Please try another listing"
-          />
-        </ClientOnly>
-      );
-    }
-
     const listing = await getListingById(listingId);
     const reservations = await getReservations({ listingId });
     const currentUser = await getCurrentUser();
@@ -41,8 +34,8 @@ export default async function ListingPage({ params }: { params: IParams }) {
       <ClientOnly>
         <ListingClient
           listing={listing}
-          reservations={reservations}
           currentUser={currentUser}
+          reservations={reservations}
         />
       </ClientOnly>
     );
